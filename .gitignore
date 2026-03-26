@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+
+# Plugin build artifacts
+com.laxe4k.timecard-plugin.sdPlugin/bin/plugin.js
+com.laxe4k.timecard-plugin.sdPlugin/bin/plugin.js.map
+com.laxe4k.timecard-plugin.sdPlugin/bin/node_modules/
+
+# Build output
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/

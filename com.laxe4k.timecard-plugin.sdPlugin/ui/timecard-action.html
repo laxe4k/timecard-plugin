@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <title>Timecard Display Settings</title>
+    <meta charset="utf-8" />
+    <script src="https://sdpi-components.dev/releases/v4/sdpi-components.js"></script>
+</head>
+
+<body>
+    <!--
+        Learn more about property inspector components at https://sdpi-components.dev/docs/components
+    -->
+    <sdpi-item label="Préset">
+        <sdpi-select setting="selectedCountry" default="fr">
+            <option value="be">Belgique (BE)</option>
+            <option value="ca">Canada (CA)</option>
+            <option value="ch">Suisse (CH)</option>
+            <option value="fr">France (FR)</option>
+            <option value="">— Personnalisé —</option>
+        </sdpi-select>
+    </sdpi-item>
+
+    <sdpi-item label="Fuseau horaire">
+        <sdpi-textfield setting="customTimezone" placeholder="Ex: America/New_York, Asia/Tokyo"></sdpi-textfield>
+    </sdpi-item>
+
+    <sdpi-item label="Label">
+        <sdpi-textfield setting="customLabel" placeholder="Ex: NYC, TYO (max 10 car.)"></sdpi-textfield>
+    </sdpi-item>
+    
+    <sdpi-item label="Info">
+        <p>Choisissez un préset ou remplissez les champs personnalisés.</p>
+        <p>Les champs personnalisés ont priorité sur le préset.</p>
+        <p>Liste des fuseaux : <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">tz database</a></p>
+    </sdpi-item>
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+{
+	"Name": "Timecard Plugin",
+	"Version": "1.0.0.0",
+	"Author": "Laxe4k",
+	"Actions": [
+		{
+			"Name": "Timecard Display",
+			"UUID": "com.laxe4k.timecard-plugin.timecard",
+			"Icon": "imgs/actions/timecard/icon",
+			"Tooltip": "Affiche l'heure locale d'un pays sélectionné, générée directement sur le Stream Deck.",
+			"PropertyInspectorPath": "ui/timecard-action.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/timecard/key",
+					"TitleAlignment": "middle"
+				}
+			]
+		}
+	],
+	"Category": "Timecard Plugin",
+	"CategoryIcon": "imgs/plugin/category-icon",
+	"CodePath": "bin/plugin.js",
+	"Description": "Affiche l'heure locale de différents pays sur le Stream Deck",
+	"Icon": "imgs/plugin/marketplace",
+	"SDKVersion": 2,
+	"Software": {
+		"MinimumVersion": "6.5"
+	},
+	"OS": [
+		{
+			"Platform": "mac",
+			"MinimumVersion": "12"
+		},
+		{
+			"Platform": "windows",
+			"MinimumVersion": "10"
+		}
+	],
+	"Nodejs": {
+		"Version": "20",
+		"Debug": "enabled"
+	},
+	"UUID": "com.laxe4k.timecard-plugin"
+}
