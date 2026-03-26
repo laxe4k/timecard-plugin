@@ -1,7 +1,22 @@
 // Package script for production distribution
-import { cpSync, mkdirSync, existsSync, writeFileSync, readFileSync, rmSync } from 'fs';
+import { mkdirSync, existsSync, writeFileSync, readFileSync, rmSync, readdirSync, statSync, copyFileSync } from 'fs';
 import { execSync } from 'child_process';
 import path from 'path';
+
+// Recursive copy that works with .node binaries (cpSync crashes on them)
+function copyDirRecursive(src, dest, filter) {
+    mkdirSync(dest, { recursive: true });
+    for (const entry of readdirSync(src)) {
+        const srcPath = path.join(src, entry);
+        const destPath = path.join(dest, entry);
+        if (filter && !filter(srcPath, destPath)) continue;
+        if (statSync(srcPath).isDirectory()) {
+            copyDirRecursive(srcPath, destPath, filter);
+        } else {
+            copyFileSync(srcPath, destPath);
+        }
+    }
+}
 
 console.log('📦 Creating production package...');
 
@@ -21,15 +36,11 @@ if (existsSync(tempPluginDir)) {
 
 // Copy plugin files to temp directory
 console.log('   📁 Copying plugin files...');
-cpSync(pluginDir, tempPluginDir, { 
-    recursive: true,
-    filter: (src, dest) => {
-        // Exclude logs and development files
-        if (src.includes('/logs/') || src.includes('\\logs\\')) return false;
-        if (src.endsWith('.log')) return false;
-        if (src.endsWith('.map')) return false;
-        return true;
-    }
+copyDirRecursive(pluginDir, tempPluginDir, (src) => {
+    if (src.includes('/logs/') || src.includes('\\logs\\')) return false;
+    if (src.endsWith('.log')) return false;
+    if (src.endsWith('.map')) return false;
+    return true;
 });
 
 // Create version info
@@ -106,39 +117,29 @@ try {
 }
 
 // Create installation readme
-const installReadme = `# Timecard Plugin Installation
+const installReadme = `# Timecard Plugin — Installation
 
-## Installation Steps
+## Méthode 1 : Installation directe (recommandée)
+1. Double-cliquer sur le fichier \`${pluginFileName}\`
+2. Stream Deck installe automatiquement le plugin
 
-### Method 1: Direct Installation (Recommended)
-1. Double-click on the \`${pluginFileName}\` file
-2. Stream Deck will automatically install the plugin
+## Méthode 2 : Installation manuelle
+1. Renommer le fichier en \`.zip\`
+2. Extraire l'archive
+3. Copier le dossier extrait dans le répertoire plugins :
+   - **Windows** : \`%APPDATA%\\Elgato\\StreamDeck\\Plugins\\\`
+   - **macOS** : \`~/Library/Application Support/com.elgato.StreamDeck/Plugins/\`
 
-### Method 2: Manual Installation
-1. Rename \`${pluginFileName}\` to \`${pluginFileName}.zip\`
-2. Extract the ZIP file
-3. Copy the extracted folder to your Stream Deck plugins directory:
-   - **Windows**: \`%APPDATA%\\Elgato\\StreamDeck\\Plugins\\\`
-   - **macOS**: \`~/Library/Application Support/com.elgato.StreamDeck/Plugins/\`
+## Utilisation
 
-## Plugin Information
-
-- **Version**: ${versionInfo.version}
-- **Build Date**: ${versionInfo.buildDate}
-- **Author**: ${versionInfo.author}
-
-## Usage
-
-1. Add the "Timecard Display" action to your Stream Deck
-2. Choisissez un préset (BE, CA, CH, FR) ou configurez un fuseau horaire personnalisé
+1. Ajouter l'action **Timecard Display** sur une touche
+2. Choisir un préset (BE, CA, CH, FR) ou configurer un fuseau horaire personnalisé
 3. L'image se met à jour automatiquement chaque seconde
 
-## Fonctionnalités
+## Informations
 
-- Support de tous les fuseaux horaires IANA
-- Présets pour Belgique, Canada, Suisse et France
-- Fuseaux horaires et labels personnalisables
-- Plusieurs instances avec différentes configurations
+- **Version** : ${versionInfo.version}
+- **Auteur** : ${versionInfo.author}
 `;
 
 writeFileSync(path.join(distDir, 'INSTALLATION.md'), installReadme);
