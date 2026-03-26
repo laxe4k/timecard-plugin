@@ -22,7 +22,8 @@ console.log('📦 Creating production package...');
 
 const distDir = 'dist';
 const pluginDir = 'com.laxe4k.timecard-plugin.sdPlugin';
-const tempPluginDir = path.join(distDir, 'temp-plugin');
+const tempBaseDir = path.join(distDir, 'temp-pkg');
+const tempPluginDir = path.join(tempBaseDir, pluginDir);
 
 // Create dist directory
 if (!existsSync(distDir)) {
@@ -30,8 +31,8 @@ if (!existsSync(distDir)) {
 }
 
 // Clean temp directory if exists
-if (existsSync(tempPluginDir)) {
-    rmSync(tempPluginDir, { recursive: true, force: true });
+if (existsSync(tempBaseDir)) {
+    rmSync(tempBaseDir, { recursive: true, force: true });
 }
 
 // Copy plugin files to temp directory
@@ -79,7 +80,7 @@ try {
     }
 
     // Create ZIP file first - use different approach for better compatibility
-    const zipCommand = `powershell "Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory('${tempPluginDir}', '${tempZipFile}')"`;
+    const zipCommand = `powershell "Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory('${tempBaseDir}', '${tempZipFile}')"`;
     execSync(zipCommand, { stdio: 'pipe' });
     
     // Rename ZIP to .streamDeckPlugin
@@ -145,7 +146,7 @@ const installReadme = `# Timecard Plugin — Installation
 writeFileSync(path.join(distDir, 'INSTALLATION.md'), installReadme);
 
 // Clean up temp directory
-rmSync(tempPluginDir, { recursive: true, force: true });
+rmSync(tempBaseDir, { recursive: true, force: true });
 
 console.log(`✅ Production package created in: ${distDir}/`);
 console.log('');
