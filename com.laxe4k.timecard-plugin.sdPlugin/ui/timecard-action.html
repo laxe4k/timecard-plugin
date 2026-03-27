@@ -28,10 +28,15 @@
     <sdpi-item label="Label">
         <sdpi-textfield setting="customLabel" placeholder="Ex: NYC, TYO (max 10 car.)"></sdpi-textfield>
     </sdpi-item>
+
+    <sdpi-item label="Image de fond">
+        <sdpi-file setting="backgroundImage" accept=".png,.jpg,.jpeg,.webp"></sdpi-file>
+    </sdpi-item>
     
     <sdpi-item label="Info">
         <p>Choisissez un préset ou remplissez les champs personnalisés.</p>
         <p>Les champs personnalisés ont priorité sur le préset.</p>
+        <p>Image de fond : 128×128px recommandé. Couleur par défaut si vide.</p>
         <p>Liste des fuseaux : <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">tz database</a></p>
     </sdpi-item>
 </body>

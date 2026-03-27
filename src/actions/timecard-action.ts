@@ -6,7 +6,7 @@ import {
   WillDisappearEvent,
   DidReceiveSettingsEvent,
 } from "@elgato/streamdeck";
-import { createCanvas, GlobalFonts } from "@napi-rs/canvas";
+import { createCanvas, GlobalFonts, loadImage } from "@napi-rs/canvas";
 import { existsSync } from "fs";
 
 // Register Arial Bold if available on the system
@@ -26,6 +26,7 @@ for (const p of fontPaths) {
 export class TimecardAction extends SingletonAction<TimecardSettings> {
   private updateIntervals = new Map<string, NodeJS.Timeout>();
   private lastDisplayedTime = new Map<string, string>();
+  private bgImageCache = new Map<string, Awaited<ReturnType<typeof loadImage>>>();
 
   private static readonly presets: Record<
     string,
@@ -49,6 +50,7 @@ export class TimecardAction extends SingletonAction<TimecardSettings> {
     const contextId = ev.action.id;
     this.stopImageRefresh(contextId);
     this.lastDisplayedTime.delete(contextId);
+    this.bgImageCache.clear();
   }
 
   override onDidReceiveSettings(
@@ -56,6 +58,7 @@ export class TimecardAction extends SingletonAction<TimecardSettings> {
   ): void | Promise<void> {
     this.stopImageRefresh(ev.action.id);
     this.lastDisplayedTime.delete(ev.action.id);
+    this.bgImageCache.clear();
     this.startImageRefresh(ev);
   }
 
@@ -118,15 +121,30 @@ export class TimecardAction extends SingletonAction<TimecardSettings> {
     }
     this.lastDisplayedTime.set(contextId, displayKey);
 
-    // Generate PNG image identical to the Python script (Pillow)
+    // Generate PNG image
     const W = 128,
       H = 128;
     const canvas = createCanvas(W, H);
     const ctx = canvas.getContext("2d");
 
-    // Background
-    ctx.fillStyle = "#04202f";
-    ctx.fillRect(0, 0, W, H);
+    // Background: image or solid color
+    const bgPath = ev.payload.settings.backgroundImage;
+    if (bgPath) {
+      try {
+        let img = this.bgImageCache.get(bgPath);
+        if (!img) {
+          img = await loadImage(bgPath);
+          this.bgImageCache.set(bgPath, img);
+        }
+        ctx.drawImage(img, 0, 0, W, H);
+      } catch {
+        ctx.fillStyle = "#04202f";
+        ctx.fillRect(0, 0, W, H);
+      }
+    } else {
+      ctx.fillStyle = "#04202f";
+      ctx.fillRect(0, 0, W, H);
+    }
 
     // Text settings — matching Python's Pillow output
     const fontFamily = "ArialBold, Arial, sans-serif";
@@ -179,4 +197,5 @@ type TimecardSettings = {
   selectedCountry?: string;
   customTimezone?: string;
   customLabel?: string;
+  backgroundImage?: string;
 };
