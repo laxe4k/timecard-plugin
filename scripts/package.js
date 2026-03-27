@@ -118,7 +118,7 @@ try {
 }
 
 // Create installation readme
-const installReadme = `# Timecard Plugin — Installation
+const installReadme = `# Timecard Plugin - Installation
 
 ## Méthode 1 : Installation directe (recommandée)
 1. Double-cliquer sur le fichier \`${pluginFileName}\`
