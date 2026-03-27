@@ -146,7 +146,7 @@ export class TimecardAction extends SingletonAction<TimecardSettings> {
       ctx.fillRect(0, 0, W, H);
     }
 
-    // Text settings — matching Python's Pillow output
+    // Text settings - matching Python's Pillow output
     const fontFamily = "ArialBold, Arial, sans-serif";
     ctx.fillStyle = "#FFFFFF";
     ctx.textAlign = "center";
